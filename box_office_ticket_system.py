@@ -1,6 +1,4 @@
 
-
-
 class TicketQueue:
 
     def __init__(self):
@@ -31,7 +29,6 @@ class TicketSystem(TicketQueue):
         self.no_of_windows = no_of_windows
         self.window_size = window_size
         self.ticket_queues = [TicketQueue() for i in range(self.no_of_windows)]
-        self.queue_ends = [self.ticket_queues[i].size() for i in range(self.no_of_windows)]
         self.open_windows = [False for window in range(self.no_of_windows)]
         self.open_windows[0] = True
         
@@ -43,34 +40,78 @@ class TicketSystem(TicketQueue):
         if self.open_windows[window-1] == False:
             return []
         else:
-            return len(ticket_queues[window])
+            return self.ticket_queues[window-1].get_queue()
+    
+    #Get the all current open windows
+    def get_open_windows(self):
+        curr_open_windows = []
+        for i in range(self.no_of_windows):
+            if self.open_windows[i] == True:
+                curr_open_windows.append(i)
+        return curr_open_windows
     
     #Getting Queue which has least number of people
     def get_priority_window(self):
-        temp_window_size = self.window_size
-        window = 0
-        for i in range(self.no_of_windows):
-            if self.open_windows[i] == True:
-                if self.ticket_queues[i].size() < temp_window_size:
-                    temp_window_size = self.ticket_queues[i].size()
-                    window = i
-        return window
+        min_window_size = self.window_size
+        min_window = -1
+        curr_open_windows = self.get_open_windows()
+        for i in curr_open_windows:
+            if self.ticket_queues[i].size() < min_window_size:
+                min_window_size = self.ticket_queues[i].size()
+                min_window = i
+        
+        if min_window_size == (self.window_size):
+            min_window = len(curr_open_windows)
+            self.open_windows[min_window] = True
+        return min_window
         
     #Checking whether all Queues are full or not
     def check_all_windows_full(self):
         #open_windows.index(i) for i in range(open_windows) if i == True]
         for i in range(self.no_of_windows):
-            if self.ticket_queues[i].size() == (window_size - 1):
+            if self.ticket_queues[i].size() == self.window_size:
                 continue
             else:
                 return False
         return True
-    
+
+    #Adding person to ticket queue 
     def add_person(self, person_id):
-        is_all_windows_full = check_all_windows_full()
-        if is_all_windows_full is False:
-            print("All Queues are Full.")
-            return
+        is_all_windows_full = self.check_all_windows_full()
+        if is_all_windows_full is True:
+            return 'All Queues are Full'
+        
+        at_window = self.get_priority_window()
+        self.ticket_queues[at_window].enqueue(person_id)
+        return 1
+        
+    #Issues tickets to person in the queue
+    def issue_tickets(self):
+        curr_open_windows = self.get_open_windows()
+        tickets_issued = 0
+        for window in curr_open_windows:
+            if self.ticket_queues[window].size() > 0:
+                self.ticket_queues[window].dequeue()
+                tickets_issued += 1
+        return tickets_issued
         
         
+if __name__ == '__main__':
+    with open("inputPS16Q1.txt","r") as f:
+        line = f.readline()
+        action, no_of_windows, window_size = line.split(":")
+        ticket_system = TicketSystem(int(no_of_windows), int(window_size))
         
+        line = f.readline()
+        while line:
+            action, _ = line.split(":")
+            if action == 'addPerson':
+                print("{} {} {}".format(line.strip(), " >> ", ticket_system.add_person(int(_))))
+            elif action == 'getWindow':
+                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.get_window(int(_))))
+            elif action == 'isOpen':
+                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.is_window_open(int(_))))
+            elif action == 'giveTicket':
+                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
+            line = f.readline()
+            
