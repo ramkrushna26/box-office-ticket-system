@@ -83,7 +83,7 @@ class TicketSystem(TicketQueue):
         
         at_window = self.get_priority_window()
         self.ticket_queues[at_window].enqueue(person_id)
-        return 1
+        return (at_window + 1)
         
     #Issues tickets to person in the queue
     def issue_tickets(self):
