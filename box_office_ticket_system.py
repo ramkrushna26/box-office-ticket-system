@@ -1,4 +1,6 @@
 
+from os.path import exists
+
 class TicketQueue:
 
     def __init__(self):
@@ -97,7 +99,15 @@ class TicketSystem(TicketQueue):
         
         
 if __name__ == '__main__':
-    with open("inputPS16Q1.txt","r") as f:
+    if exists("inputPS16Q1.txt"):
+        infile = "inputPS16Q1.txt"
+    elif exists("promptsPS16Q1.txt"):
+        infile = "promptsPS16Q1.txt"
+    else:
+        raise Exception("Input File Not Found!")
+    outfile = open("outputPS16Q1.txt", "a")
+    
+    with open(infile,"r") as f:
         line = f.readline()
         action, no_of_windows, window_size = line.split(":")
         ticket_system = TicketSystem(int(no_of_windows), int(window_size))
@@ -106,12 +116,13 @@ if __name__ == '__main__':
         while line:
             action, _ = line.split(":")
             if action == 'addPerson':
-                print("{} {} {}".format(line.strip(), " >> ", ticket_system.add_person(int(_))))
+                outfile.write("{} {} {} \n".format(line.strip(), " >> ", ticket_system.add_person(int(_))))
             elif action == 'getWindow':
-                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.get_window(int(_))))
+                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.get_window(int(_))))
             elif action == 'isOpen':
-                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.is_window_open(int(_))))
+                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.is_window_open(int(_))))
             elif action == 'giveTicket':
-                print("{} {} {}".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
+                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
             line = f.readline()
-            
+        
+    outfile.close()
