@@ -1,4 +1,5 @@
 
+
 from os.path import exists
 
 class TicketQueue:
@@ -110,19 +111,27 @@ if __name__ == '__main__':
     with open(infile,"r") as f:
         line = f.readline()
         action, no_of_windows, window_size = line.split(":")
-        ticket_system = TicketSystem(int(no_of_windows), int(window_size))
+        try:
+            ticket_system = TicketSystem(int(no_of_windows), int(window_size))
+        except ValueError:
+            raise Exception("Couldn't Understand the input. Exiting. Please check!")
         
         line = f.readline()
         while line:
             action, _ = line.split(":")
-            if action == 'addPerson':
-                outfile.write("{} {} {} \n".format(line.strip(), " >> ", ticket_system.add_person(int(_))))
-            elif action == 'getWindow':
-                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.get_window(int(_))))
-            elif action == 'isOpen':
-                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.is_window_open(int(_))))
-            elif action == 'giveTicket':
-                outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
+            try:
+                if action == 'addPerson':
+                    outfile.write("{} {} {} \n".format(line.strip(), " >> ", ticket_system.add_person(int(_))))
+                elif action == 'getWindow':
+                    outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.get_window(int(_))))
+                elif action == 'isOpen':
+                    outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.is_window_open(int(_))))
+                elif action == 'giveTicket':
+                    outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
+            except:
+                    raise Exception("Couldn't Understand the input. Exiting. Please check!")
             line = f.readline()
         
     outfile.close()
+
+    
