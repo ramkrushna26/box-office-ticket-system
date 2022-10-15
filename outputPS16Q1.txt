@@ -14,7 +14,7 @@ giveTicket:  >>  2
 giveTicket:  >>  1 
 giveTicket:  >>  1 
 getWindow:1  >>  [4, 5] 
-getWindow:2  >>  [] 
+getWindow:2  >>  None 
 addPerson:6  >>  2 
 addPerson:7  >>  2 
 addPerson:8  >>  1 

@@ -2,7 +2,7 @@
 
 from os.path import exists
 
-class TicketQueue:
+class Queue:
 
     def __init__(self):
         self.elements = []
@@ -11,27 +11,34 @@ class TicketQueue:
         self.elements.append(item)
 
     def dequeue(self):
-        item = self.elements.pop(0)
-        return item
+        if self.is_empty():
+            return None
+        return self.elements.pop(0)
 
     def size(self):
+        if self.is_empty():
+            return 0
         return len(self.elements)
 
     def is_empty(self):
         return len(self.elements) == 0
 
     def front(self):
+        if self.is_empty():
+            return None
         return self.elements[-1]
 
     def get_queue(self):
+        if self.is_empty():
+            return None
         return self.elements
 
-class TicketSystem(TicketQueue):
+class TicketSystem(Queue):
     
     def __init__(self, no_of_windows, window_size):
         self.no_of_windows = no_of_windows
         self.window_size = window_size
-        self.ticket_queues = [TicketQueue() for i in range(self.no_of_windows)]
+        self.ticket_queues = [Queue() for i in range(self.no_of_windows)]
         self.open_windows = [False for window in range(self.no_of_windows)]
         self.open_windows[0] = True
         
@@ -114,7 +121,7 @@ if __name__ == '__main__':
         try:
             ticket_system = TicketSystem(int(no_of_windows), int(window_size))
         except ValueError:
-            raise Exception("Couldn't Understand the input. Exiting. Please check!")
+            raise Exception("Incorrect input provided instead of INT. Please check!")
         
         line = f.readline()
         while line:
@@ -129,7 +136,7 @@ if __name__ == '__main__':
                 elif action == 'giveTicket':
                     outfile.write("{} {} {} \n".format(line.strip(), " >> ",  ticket_system.issue_tickets()))
             except:
-                    raise Exception("Couldn't Understand the input. Exiting. Please check!")
+                    raise Exception("Couldn't Understand item from input file. Please check!")
             line = f.readline()
         
     outfile.close()
